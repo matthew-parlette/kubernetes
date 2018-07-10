@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: atlassian
+  # annotations:
+    # kubernetes.io/tls-acme: "true"
+spec:
+  rules:
+  - host: jira.local.parlette.us
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: atlassian
+          servicePort: 8080
+  - host: confluence.local.parlette.us
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: atlassian
+          servicePort: 8090

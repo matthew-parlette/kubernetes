@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: atlassian
+  labels:
+    app: atlassian
+spec:
+  selector:
+    app: atlassian
+  ports:
+  - name: jira
+    port: 8080
+    targetPort: 8080
+  - name: confluence
+    port: 8090
+    targetPort: 8090

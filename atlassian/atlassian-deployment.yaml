@@ -1,0 +1,47 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: atlassian
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: atlassian
+    spec:
+      containers:
+      - name: jira-core
+        image: cptactionhank/atlassian-jira
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: jira
+          mountPath: /var/atlassian/jira
+          readOnly: false
+      - name: confluence
+        image: cptactionhank/atlassian-confluence
+        ports:
+        - containerPort: 8090
+        volumeMounts:
+        - name: confluence
+          mountPath: /var/atlassian/confluence
+          readOnly: false
+      volumes:
+      - name: jira
+        cephfs:
+          monitors:
+            - 192.168.86.45:6789
+          path: /jira
+          user: admin
+          secretRef:
+            name: ceph-admin-secret
+          readOnly: false
+      - name: confluence
+        cephfs:
+          monitors:
+            - 192.168.86.45:6789
+          path: /confluence
+          user: admin
+          secretRef:
+            name: ceph-admin-secret
+          readOnly: false
