@@ -15,8 +15,8 @@ else
 fi
 
 echo "Deploying applications..."
-# Set executable flag for all subdirectory apply scripts
-chmod +x */apply.sh
+# Set executable flag for all subdirectory scripts (apply, status, install, update)
+chmod +x */*.sh
 pwd=`pwd`
 for D in */
 do
