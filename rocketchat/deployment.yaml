@@ -1,0 +1,54 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: rocketchat
+spec:
+  template:
+    metadata:
+      labels:
+        app: rocketchat
+    spec:
+      containers:
+      - name: rocketchat
+        image: rocketchat/rocket.chat:latest
+        env:
+        - name: ROOT_URL
+          value: "https://chat.parlette.us"
+        - name: MONGO_URL
+          value: "mongodb://rocketchat:27017/rocketchat"
+        ports:
+          - name: http
+            containerPort: 3000
+        volumeMounts:
+        - name: rocketchat-rocketchat-storage
+          mountPath: /app/uploads
+      - name: mongodb
+        image: mongo:3.2
+        command: ["/bin/sh", "-c"]
+        args: ["mongod --smallfiles --oplogSize 128"]
+        # args: ["mongod --smallfiles --oplogSize 128 --bind_ip_all"]
+        ports:
+          - name: mongo
+            containerPort: 27017
+        volumeMounts:
+        - name: rocketchat-mongodb-storage
+          mountPath: /data/db
+      volumes:
+      - name: rocketchat-rocketchat-storage
+        cephfs:
+          monitors:
+            - "192.168.86.45:6789"
+          path: /rocketchat/rocketchat
+          user: admin
+          secretRef:
+            name: ceph-admin-secret
+          readOnly: false
+      - name: rocketchat-mongodb-storage
+        cephfs:
+          monitors:
+            - "192.168.86.45:6789"
+          path: /rocketchat/mongodb
+          user: admin
+          secretRef:
+            name: ceph-admin-secret
+          readOnly: false

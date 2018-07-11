@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: rocketchat
+spec:
+  # tls:
+    # - hosts:
+      # - chat.parlette.us
+      # secretName: rocketchat-ssl
+  rules:
+  - host: chat.parlette.us
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: rocketchat
+          servicePort: 3000
