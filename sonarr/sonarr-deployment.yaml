@@ -1,0 +1,54 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: sonarr
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: sonarr
+    spec:
+      containers:
+      - name: sonarr
+        image: linuxserver/sonarr
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8989
+        env:
+        - name: PGID
+          value: "1000"
+        - name: PUID
+          value: "1000"
+        volumeMounts:
+        - name: sonarr
+          mountPath: /config
+        - name: sabnzbd-downloads
+          mountPath: /downloads
+        - name: tv
+          mountPath: /tv
+      volumes:
+      - cephfs:
+          monitors:
+          - 192.168.86.45:6789
+          path: /tv
+          secretRef:
+            name: ceph-admin-secret
+          user: admin
+        name: tv
+      - cephfs:
+          monitors:
+          - 192.168.86.45:6789
+          path: /sonarr
+          secretRef:
+            name: ceph-admin-secret
+          user: admin
+        name: sonarr
+      - cephfs:
+          monitors:
+          - 192.168.86.45:6789
+          path: /sabnzbd/downloads
+          secretRef:
+            name: ceph-admin-secret
+          user: admin
+        name: sabnzbd-downloads

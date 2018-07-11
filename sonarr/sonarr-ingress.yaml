@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: sonarr
+  # annotations:
+    # kubernetes.io/tls-acme: "true"
+spec:
+  rules:
+  - host: sonarr.local.parlette.us
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: sonarr
+          servicePort: 80
