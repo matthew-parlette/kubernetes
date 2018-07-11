@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: couchpotato
+  # annotations:
+    # kubernetes.io/tls-acme: "true"
+spec:
+  tls:
+  # - secretName: couchpotato-cert
+    # hosts:
+    # - couchpotato.burntsheep.com
+  rules:
+  - host: couchpotato.local.parlette.us
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: couchpotato
+          servicePort: 80

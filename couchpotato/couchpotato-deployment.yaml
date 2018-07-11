@@ -1,0 +1,59 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: couchpotato
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: couchpotato
+    spec:
+      containers:
+      - name: couchpotato
+        image: linuxserver/couchpotato
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5050
+        env:
+        - name: PGID
+          value: "1000"
+        - name: PUID
+          value: "1000"
+        volumeMounts:
+        - name: couchpotato
+          mountPath: /config
+        - name: localtime
+          mountPath: /etc/localtime
+        - name: sabnzbd-downloads
+          mountPath: /downloads
+        - name: movies
+          mountPath: /movies
+      volumes:
+      - cephfs:
+          monitors:
+          - 192.168.86.45:6789
+          path: /movies
+          secretRef:
+            name: ceph-admin-secret
+          user: admin
+        name: movies
+      - cephfs:
+          monitors:
+          - 192.168.86.45:6789
+          path: /couchpotato
+          secretRef:
+            name: ceph-admin-secret
+          user: admin
+        name: couchpotato
+      - cephfs:
+          monitors:
+          - 192.168.86.45:6789
+          path: /sabnzbd/downloads
+          secretRef:
+            name: ceph-admin-secret
+          user: admin
+        name: sabnzbd-downloads
+      - name: localtime
+        hostPath:
+          path: /etc/localtime
